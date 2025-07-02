@@ -22,7 +22,11 @@ defmodule RestApi.Router do
 
   # Handler for GET request with "/" path
   get "/" do
-    send_resp(conn, 200, "OK")
+    address = "test"
+    {:ok, if} = :inet.getifaddrs
+    {_, a} = if |> Enum.filter(fn {name, _} -> name == ~c"eth0" end) |> List.first
+    address = a[:addr] |> :inet.ntoa() |> IO.inspect()
+    send_resp(conn, 200, "OK, #{address}]")
   end
 
   # Fallback handler when there was no match
