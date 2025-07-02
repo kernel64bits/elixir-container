@@ -10,6 +10,7 @@ defmodule RestApi.Application do
     children = [
       # Starts a worker by calling: RestApi.Worker.start_link(arg)
       # {RestApi.Worker, arg}
+      {Plug.Cowboy, scheme: :http, plug: RestApi.Router, options: [port: 8080]}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

@@ -1,18 +1,32 @@
-defmodule RestApi do
-  @moduledoc """
-  Documentation for `RestApi`.
-  """
+defmodule RestApi.Router do
+  # Bring Plug.Router module into scope
+  use Plug.Router
 
-  @doc """
-  Hello world.
+  # Attach the Logger to log incoming requests
+  plug(Plug.Logger)
 
-  ## Examples
+  # Tell Plug to match the incoming request with the defined endpoints
+  plug(:match)
 
-      iex> RestApi.hello()
-      :world
+  # Once there is a match, parse the response body if the content-type
+  # is application/json. The order is important here, as we only want to
+  # parse the body if there is a matching route.(Using the Jayson parser)
+  plug(Plug.Parsers,
+    parsers: [:json],
+    pass: ["application/json"],
+    json_decoder: Jason
+  )
 
-  """
-  def hello do
-    :world
+  # Dispatch the connection to the matched handler
+  plug(:dispatch)
+
+  # Handler for GET request with "/" path
+  get "/" do
+    send_resp(conn, 200, "OK")
+  end
+
+  # Fallback handler when there was no match
+  match _ do
+    send_resp(conn, 404, "Not Found")
   end
 end
